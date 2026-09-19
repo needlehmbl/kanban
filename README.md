@@ -13,12 +13,14 @@ Multi-user, self-hostable kanban board with GitHub OAuth login, drag-and-drop bo
 cp .env.example .env
 # fill in GITHUB_CLIENT_ID / GITHUB_CLIENT_SECRET from https://github.com/settings/developers
 # callback URL: http://localhost:4000/auth/github/callback
-docker compose up
+./kanban.sh start   # or: docker compose up
 ```
 
-- Web: http://localhost:5176
+- Web: http://localhost:5176 (no-login demo: `/boards?demo=1`)
 - API: http://localhost:4000/health
 - Login: "Sign in with GitHub" → redirects to /boards on success
+
+Manage the stack with `./kanban.sh {start|stop|restart|status|logs}`.
 
 ## Local dev (without Docker)
 
