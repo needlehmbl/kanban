@@ -18,10 +18,16 @@ API_URL="http://localhost:4000/health"
 WEB_URL="http://localhost:5176"
 
 need_docker() {
-  if ! docker info >/dev/null 2>&1; then
-    echo "ERROR: docker daemon not reachable (is Docker running?)."
-    exit 1
+  if docker info >/dev/null 2>&1; then return 0; fi
+  echo "ERROR: docker daemon not reachable."
+  if [ -S /var/run/docker.sock ] && [ ! -w /var/run/docker.sock ]; then
+    echo "      The socket exists but you lack access — typical right after"
+    echo "      'usermod -aG docker'. Run 'newgrp docker' (or log out and back"
+    echo "      in), then retry."
+  else
+    echo "      Is Docker installed and running? Try: sudo systemctl start docker"
   fi
+  exit 1
 }
 
 ensure_env() {
