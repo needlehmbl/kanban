@@ -46,6 +46,12 @@ app.get("/health", (_req, res) => {
   res.json({ ok: true, service: "kanban-api" });
 });
 
+// No UI lives on the API origin — send stray visitors to the web app
+// instead of an Express "Cannot GET /" page.
+app.get("/", (_req, res) => {
+  res.redirect(FRONTEND_URL);
+});
+
 app.use("/auth", authRouter);
 app.use("/api/boards", boardsRouter);
 
