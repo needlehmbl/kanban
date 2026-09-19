@@ -9,6 +9,12 @@ services:
       - "${DB_PORT:-5433}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-kanban}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
   api:
     build: ./backend
@@ -23,7 +29,9 @@ services:
     ports:
       - "4000:4000"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
     volumes:
       - ./backend:/app
       - /app/node_modules
@@ -35,6 +43,7 @@ services:
       VITE_API_URL: http://localhost:4000/api
     ports:
       - "5176:5176"
+    restart: unless-stopped
     volumes:
       - ./frontend:/app
       - /app/node_modules
